@@ -16,13 +16,28 @@ class Player(pg.sprite.Sprite):
         self.acc = vec(0, 0)
 
     def update(self):
-        self.acc = (0, 0)
+        self.acc = vec(0, 0)
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT]:
-            self.acc.x = -0.5
+            self.acc.x = -PLAYER_ACC
+            print("pos: ", self.pos)
+            print("acc: ", self.acc)
+            print("vel: ", self.vel)
+            print("=========================")
         if keys[pg.K_RIGHT]:
-            self.acc.y = 0.5
+            self.acc.x = PLAYER_ACC
+            print("pos: ", self.pos)
+            print("acc: ", self.acc)
+            print("vel: ", self.vel)
+            print("=========================")
+
+        # self.acc += self.vel * 0.12
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
 
         self.rect.center = self.pos
+
+        if self.pos.x > WIDTH:
+            self.pos.x = 0
+        if self.pos.x < 0:
+            self.pos.x = WIDTH
