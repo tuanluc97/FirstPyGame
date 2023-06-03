@@ -3,6 +3,7 @@ import random
 from settings import *
 from sprite import *
 
+
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -16,8 +17,15 @@ class Game:
     def new(self):
         # start a new game
         self.all_sprites = pygame.sprite.Group()
-        self.player = Player()
+        self.platforms = pygame.sprite.Group()
+        self.player = Player(self)
         self.all_sprites.add(self.player)
+
+        for plat in PLATFORM_LIST:
+            p = Platform(*plat)
+            self.all_sprites.add(p)
+            self.platforms.add(p)
+
         g.run()
 
     def run(self):
@@ -33,6 +41,13 @@ class Game:
     def update(self):
         # Game loop - Update
         self.all_sprites.update()
+        #  check if player hits a platform
+        # if self.player.vel.y > 0
+        if self.player.vel.y > 0:
+            hits = pygame.sprite.spritecollide(self.player, self.platforms, False)
+            if hits:
+                self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
 
     def event(self):
         for event in pygame.event.get():
@@ -40,15 +55,22 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.player.jump()
 
     def draw(self):
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         pygame.display.flip()
+
     def show_start_screen(self):
         pass
+
     def show_go_screen(self):
         pass
+
+
 g = Game()
 g.show_start_screen()
 while g.running:
